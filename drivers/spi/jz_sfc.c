@@ -1112,6 +1112,26 @@ unsigned int get_partition_index(u32 offset, int *pt_offset, int *pt_size)
 	return i;
 }
 
+int check_offset(u32 offset,u32 length)
+{
+	int i;
+
+	for(i = 1; i < pdata.norflash_partitions.num_partition_info; i++){
+		if(offset < pdata.norflash_partitions.nor_partition[i].offset && \
+				offset > (pdata.norflash_partitions.nor_partition[i-1].offset + \
+				pdata.norflash_partitions.nor_partition[i-1].size)){
+			break;
+		}
+	}
+	if(i >= pdata.norflash_partitions.num_partition_info){
+		return i;
+	}else if((offset+length) > pdata.norflash_partitions.nor_partition[i].offset ){
+		return -1;
+	}else{
+		return i;
+	};
+}
+
 int sfc_flash_scan(struct spi_flash *flash,unsigned int id,struct norflash_params *norflash)
 {
 	struct spi_slave *spi = flash->spi;
