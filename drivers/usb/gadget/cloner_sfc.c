@@ -66,13 +66,6 @@ int sfc_program(struct cloner *cloner)
 		}
 	}
 
-	pt_index = get_partition_index(offset, &pt_offset, &pt_size);
-
-	if(pt_index < 0){
-		BURNNER_PRI("the offset is not in partition table,please config again %x\n",offset);
-		return -1;
-	}
-
 	BURNNER_PRI("the offset = %x\n",offset);
 	BURNNER_PRI("the length = %x\n",length);
 
@@ -83,6 +76,26 @@ int sfc_program(struct cloner *cloner)
 	else{
 		BURNNER_PRI("the length = %x, is no enough %x\n",length,blk_size);
 		len = (length/blk_size)*blk_size + blk_size;
+	}
+
+	pt_index = get_partition_index(offset, &pt_offset, &pt_size);
+
+	if(pt_index < 0){
+		int index_offset = check_offset(offset,len);
+		if(index_offset < 0){
+			BURNNER_PRI("the offset + len is greater than the partition offset,please check it\n");
+			return -1;
+		}
+		if (cloner->args->spi_erase == SPI_NO_ERASE) {
+			ret = sfc_nor_erase(offset, len);
+			BURNNER_PRI("SF: %zu bytes @ %#x Erased: %s\n", (size_t)len, (u32)offset,
+				ret ? "ERROR" : "OK");
+		}
+		ret = sfc_nor_write(offset, len, addr,0);
+		BURNNER_PRI("SF: %zu bytes @ %#x write: %s\n", (size_t)len, (u32)offset,
+			ret ? "ERROR" : "OK");
+
+		return 0;
 	}
 
 	if (cloner->args->spi_erase == SPI_NO_ERASE) {
