@@ -549,6 +549,9 @@ int efuse_read_id(void *buf, int length, int id)
 		case EFUSE_R_USER_ID:
 			offset = CUT_ID_ADDR;
 			break;
+		case EFUSE_R_RN:
+			offset = RN_ADDR;
+			break;
 		default:
 			printf("Unkown id !\n");
 			return -EPERM;

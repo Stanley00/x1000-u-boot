@@ -5,7 +5,7 @@
 
 #define EFUSE_R_CHIP_ID		(0x1)
 #define EFUSE_R_USER_ID		(0x2)
-
+#define EFUSE_R_RN		(0X3)
 
 
 #ifdef CONFIG_CMD_EFUSE

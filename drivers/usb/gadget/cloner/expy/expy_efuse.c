@@ -2,13 +2,27 @@
 #include "../extend_policy_manager.h"
 #include <efuse.h>
 
-struct efuse_op {
+__attribute__((weak))
+int efuse_read_id(void *buf, int length, int id)
+{
+	return 0;
+}
+
+enum EFUSE_OPS{
+	WRITE_USER_ID,
+	READ_CHIP_ID,
+	READ_USER_ID,
+	READ_RN
+};
+
+struct efuse_info {
 	int gpio;
 	int offset;
 	int ops;  /*ops = 1 write*/
 	int length;
 	long long data;
 };
+
 struct efuse_priv {
 	char *transfer_buf;
 	int trans_len;
@@ -18,36 +32,53 @@ struct efuse_priv {
 int expy_efuse_write(void *buf, int length, void *data)
 {
 	printf("%s\n", __func__);
-	struct efuse_op *op = (struct efuse_op *)buf;
+	struct efuse_info *info = (struct efuse_info *)buf;
 	struct efuse_priv *priv = (struct efuse_priv *)data;
 
-	int r = 0;
-	int len = op->length;
+	int r = 0, len = 0, id = 0, flag = 0;
+	len = info->length;
 	priv->transfer_buf = malloc(sizeof(char)*len);
 	memset(priv->transfer_buf, 0, len);
-	sprintf(priv->transfer_buf,"%lld",op->data);
 
-
-	printf("gpio = %d, data = %lld, length = %d, offset = %d, ops = %s\n",
-			op->gpio,op->data,op->length, op->offset,op->ops?"write":"read");
-
-	if ((r = efuse_init(op->gpio)) < 0) {
+	switch(info->ops) {
+		case WRITE_USER_ID:
+			break;
+		case READ_CHIP_ID:
+			id = EFUSE_R_CHIP_ID;
+			len = 16;
+			flag = 1;
+			break;
+		case READ_USER_ID:
+			id = EFUSE_R_USER_ID;
+			len = 30;
+			flag = 1;
+			break;
+		case READ_RN:
+			id = EFUSE_R_RN;
+			len = 16;
+			flag = 1;
+			break;
+		default:;
+			break;
+	}
+	if ((r = efuse_init(info->gpio)) < 0) {
 		printf("efuse init error\n");
 		return r;
 	}
-
-	if (op->ops) {
-		if (!!(r = efuse_write(priv->transfer_buf, len, op->offset))) {
-			printf("expy_efuse write error\n");
+	if (flag) {
+		if ((r = efuse_read_id(priv->transfer_buf, len, id)) < 0) {
+			printf("efuse read error\n");
 			return r;
 		}
 	} else {
-		if ((r = efuse_read(priv->transfer_buf, len, op->offset)) < 0) {
-			printf("expy_efuse read error\n");
+		printf("gpio = %d, data = %llx, length = %d, offset = %x, ops = %d\n",
+				info->gpio,info->data,info->length, info->offset,info->ops);
+		sprintf(priv->transfer_buf,"%llx",info->data);
+		if (!!(r = efuse_write(priv->transfer_buf, len, info->offset))) {
+			printf("expy_efuse write error\n");
 			return r;
 		}
 	}
-
 	priv->trans_len = r * 4;
 	return 0;
 }
