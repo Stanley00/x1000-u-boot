@@ -11,12 +11,40 @@
 #include <nand.h>
 #define X_COMMAND_LENGTH 128
 
+extern nand_info_t nand_info[CONFIG_SYS_MAX_NAND_DEVICE];
+static unsigned int bad_len = 0;
+
+static int sfc_nand_read_skip_bad(unsigned int addr, char *buffer, unsigned int len)
+{
+	unsigned int offset;
+	nand_info_t *nand;
+	nand = &nand_info[0];
+	unsigned int block_size = nand->erasesize;
+
+	offset = addr + bad_len;
+
+	while (nand_block_isbad(nand, offset)) {
+		printf("Skip bad block 0x%lx\n", offset);
+		bad_len += block_size;
+		offset += block_size;
+	}
+
+	nand_read(nand, offset, &len, buffer);
+
+	return offset;
+}
+
+
+
 int do_sfcnand(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 {
 	char *cmd;
 	unsigned int dst_addr,offset,len;
 	char command[X_COMMAND_LENGTH];
 	int ret;
+	nand_info_t *nand;
+	nand = &nand_info[0];
+	unsigned int block_size = nand->erasesize;
 
 	cmd = argv[1];
 
@@ -30,13 +58,14 @@ int do_sfcnand(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 	len = (unsigned int)simple_strtoul(argv[3], NULL, 16);
 	dst_addr = (unsigned int)simple_strtoul(argv[4], NULL, 16);
 
-	memset(command,0,X_COMMAND_LENGTH);
-	sprintf(command,"nand %s.jffs2 0x%x 0x%x 0x%x",cmd,dst_addr,offset,len);
+	while(len) {
 
-	ret = run_command(command,0);
-	if(ret)
-		printf("do sfcnand read error ! please check your param !!\n");
+		sfc_nand_read_skip_bad(offset, dst_addr, block_size);
+		offset += block_size;
+		dst_addr += block_size;
+		len -= block_size;
 
+	}
 	return CMD_RET_SUCCESS;
 }
 U_BOOT_CMD(sfcnand, 5, 1, do_sfcnand,
