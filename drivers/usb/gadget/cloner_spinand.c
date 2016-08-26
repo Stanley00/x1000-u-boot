@@ -5,6 +5,8 @@
 #include "../../mtd/nand/jz_spinand.h"
 #include "burn_printf.h"
 
+#include <nand.h>
+
 extern struct jz_spinand_partition *get_partion_index(u32 startaddr,int *pt_index);
 extern struct nand_param_from_burner nand_param_from_burner;
 /*******************************************************************************
@@ -30,6 +32,32 @@ void get_burner_nandinfo(struct cloner *cloner,struct nand_param_from_burner *pa
 	member_addr+=sizeof(param->partition_num);
         param->partition=member_addr;
 }
+
+
+extern nand_info_t nand_info[CONFIG_SYS_MAX_NAND_DEVICE];
+static unsigned int bad_len = 0;
+
+static int sfc_nand_write_skip_bad(unsigned int addr, char *buffer, unsigned int len)
+{
+	nand_info_t *nand;
+	nand = &nand_info[0];
+	unsigned int offset;
+	unsigned int block_size = nand->erasesize;
+
+	offset = addr + bad_len;
+
+	while (nand_block_isbad(nand, offset)) {
+		printf("Skip bad block 0x%lx\n", offset);
+		bad_len += block_size;
+		offset += block_size;
+	}
+
+	nand_write(nand, offset, &len, buffer);
+
+	return 0;
+}
+
+
 int spinand_program(struct cloner *cloner)
 {
 	u32 length = cloner->cmd->write.length;
@@ -43,6 +71,8 @@ int spinand_program(struct cloner *cloner)
 
 	static int pt_index_bak = -1;
 	static char *part_name = NULL;
+	nand_info_t *nand;
+	nand = &nand_info[0];
 
 	partation = get_partion_index(startaddr,&pt_index);
 	if(startaddr==0){
@@ -62,11 +92,13 @@ int spinand_program(struct cloner *cloner)
 	memset(command, 0 , 128);
 
 	if(partation->manager_mode == MTD_MODE){
-		sprintf(command, "nand write.jffs2 0x%x 0x%x 0x%x", (unsigned)databuf, startaddr, length);
-		BURNNER_PRI("%s\n", command);
-		ret = run_command(command, 0);
-		if (ret) goto out;
-		BURNNER_PRI("...ok\n");
+
+		if ((startaddr + length) < (partation->size + partation->offset)) {
+			sfc_nand_write_skip_bad(startaddr, databuf, length);
+		} else {
+			printk("ERROR : out of partation !!!\n");
+		}
+
 	}else if(partation->manager_mode == UBI_MANAGER){
 		if(!(part_name == partation->name) && cloner->args->spi_erase){/* need change part */
 			memset(command, 0, 128);
