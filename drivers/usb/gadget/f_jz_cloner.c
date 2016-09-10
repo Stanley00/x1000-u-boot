@@ -407,6 +407,7 @@ void handle_write(struct usb_ep *ep,struct usb_request *req)
 		default:
 			cloner->ack = clmg_write(cloner);
 	}
+	memset(cloner->write_req->buf,0,cloner->write_req->length);
 #undef OPS
 }
 
@@ -463,7 +464,7 @@ void handle_cmd(struct usb_ep *ep,struct usb_request *req)
 		case VR_CHECK:
 			cloner->ack = handle_check(cloner);
 			break;
-	    case VR_GET_CHIP_ID:
+		case VR_GET_CHIP_ID:
 		case VR_GET_USER_ID:
 		case VR_GET_ACK:
 		case VR_GET_CPU_INFO:

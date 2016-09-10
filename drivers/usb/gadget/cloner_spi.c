@@ -75,7 +75,7 @@ int spi_program(struct cloner *cloner)
 	BURNNER_PRI("the length = %x\n",length);
 
 
-	if (length%blk_size == 0){
+	if (length < blk_size || length%blk_size == 0){
 		len = length;
 		BURNNER_PRI("the length = %x,blk_size = %x\n",length,blk_size);
 	}
