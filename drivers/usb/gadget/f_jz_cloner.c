@@ -258,7 +258,7 @@ void handle_read(struct cloner *cloner)
 		realloc_buf(cloner, ((cloner->cmd->read.length + 0x200) & (~(0x200 - 1))));
 		ret = mmc_read_x((cloner->cmd->read.ops & 0xffff),
 				cloner->read_req->buf,
-				cloner->cmd->read.partation + cloner->cmd->read.offset,
+				cloner->cmd->read.partition + cloner->cmd->read.offset,
 				cloner->cmd->read.length);
 		break;
 #endif
@@ -296,7 +296,7 @@ int handle_check(struct cloner *cloner)
 	case OPS(MMC,1):
 	case OPS(MMC,2):
 		ret = mmc_read_x((cloner->cmd->check.ops & 0xffff), buf,
-				cloner->cmd->check.partation + cloner->cmd->check.offset,
+				cloner->cmd->check.partition + cloner->cmd->check.offset,
 				512);
 		check_buf = buf[0];
 		break;
@@ -394,7 +394,7 @@ void handle_write(struct usb_ep *ep,struct usb_request *req)
 			break;
 		case OPS(REGISTER,RAW):
 			{
-				volatile unsigned int *tmp = (void *)cloner->cmd->write.partation;
+				volatile unsigned int *tmp = (void *)cloner->cmd->write.partition;
 				if((unsigned)tmp > 0xb0000000 && (unsigned)tmp < 0xb8000000) {
 					*tmp = *((int*)cloner->write_req->buf);
 					cloner->ack = 0;

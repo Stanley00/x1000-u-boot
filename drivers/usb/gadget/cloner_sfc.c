@@ -4,7 +4,7 @@
 extern unsigned int sfc_rate;
 extern unsigned int sfc_quad_mode;
 extern int sfc_is_init;
-extern unsigned int get_partition_index(u32 offset,int *pt_offset, int *pt_size);
+extern unsigned int get_partition_index(u32 offset,u32 length,int *pt_offset, int *pt_size);
 
 int sfc_erase(struct cloner *cloner)
 {
@@ -35,7 +35,7 @@ int sfc_program(struct cloner *cloner)
 	unsigned int cs = CONFIG_SF_DEFAULT_CS;
 	unsigned int speed = CONFIG_SF_DEFAULT_SPEED;
 	unsigned int mode = CONFIG_SF_DEFAULT_MODE;
-	u32 offset = cloner->cmd->write.partation + cloner->cmd->write.offset;
+	u32 offset = cloner->cmd->write.partition + cloner->cmd->write.offset;
 	u32 length = cloner->cmd->write.length;
 	int blk_size = cloner->args->spi_erase_block_siz;
 	void *addr = (void *)cloner->write_req->buf;
@@ -74,11 +74,11 @@ int sfc_program(struct cloner *cloner)
 		BURNNER_PRI("the length = %x\n",len);
 	}
 	else{
-		BURNNER_PRI("the length = %x, is no enough %x\n",length,blk_size);
 		len = (length/blk_size)*blk_size + blk_size;
+		BURNNER_PRI("the length = %x, is no enough %x\n",len,blk_size);
 	}
 
-	pt_index = get_partition_index(offset, &pt_offset, &pt_size);
+	pt_index = get_partition_index(offset,len, &pt_offset, &pt_size);
 
 	if(pt_index < 0){
 		int index_offset = check_offset(offset,len);

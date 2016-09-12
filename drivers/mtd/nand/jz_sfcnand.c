@@ -323,7 +323,7 @@ static int sfcnand_write_oob(struct mtd_info *mtd,loff_t addr,struct mtd_oob_ops
 	unsigned char cmd[COMMAND_MAX_LENGTH];
 	int page = addr / mtd->writesize;
 	int ret;
-	size_t retlen
+	size_t retlen;
 
 	cmd[0]=CMD_PARD;//get feature
 	sfc_send_cmd(&cmd[0],0,page,3,0,0,0);
@@ -805,7 +805,7 @@ static int mtd_sfcnand_partition_analysis(unsigned int blk_sz,int partcount,stru
         setenv("mtdparts", mtdparts_env);
         setenv("partition", NULL);
 }
-extern struct jz_spinand_partition *get_partion_index(u32 startaddr,int *pt_index);
+extern struct jz_spinand_partition *get_partion_index(u32 startaddr,u32 length,int *pt_index);
 
 int mtd_sfcnand_probe_burner(/*MTDPartitionInfo *pinfo,*/int *erase_mode,int sfc_quad_mode,struct nand_param_from_burner *param)
 {
