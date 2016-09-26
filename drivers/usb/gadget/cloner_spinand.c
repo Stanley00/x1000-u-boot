@@ -43,6 +43,7 @@ static int sfc_nand_write_skip_bad(unsigned int addr, char *buffer, unsigned int
 	nand = &nand_info[0];
 	unsigned int offset;
 	unsigned int block_size = nand->erasesize;
+	int ret;
 
 	offset = addr + bad_len;
 
@@ -52,9 +53,9 @@ static int sfc_nand_write_skip_bad(unsigned int addr, char *buffer, unsigned int
 		offset += block_size;
 	}
 
-	nand_write(nand, offset, &len, buffer);
+	ret = nand_write(nand, offset, &len, buffer);
 
-	return 0;
+	return ret;
 }
 
 
@@ -96,9 +97,11 @@ int spinand_program(struct cloner *cloner)
 	if(partition->manager_mode == MTD_MODE){
 
 		if ((startaddr + length) <= (partition->size + partition->offset)) {
-			sfc_nand_write_skip_bad(startaddr, databuf, length);
+			ret = sfc_nand_write_skip_bad(startaddr, databuf, length);
+			BURNNER_PRI("nand write to offset 0x%lx, length = 0x%lx : %s\n",
+					startaddr, length, ret ? "ERROR" : "OK");
 		} else {
-			printk("ERROR : out of partition !!!\n");
+			BURNNER_PRI("ERROR : out of partition !!!\n");
 		}
 
 	}else if(partition->manager_mode == UBI_MANAGER){
