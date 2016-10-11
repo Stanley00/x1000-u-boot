@@ -145,8 +145,12 @@ AS	= $(CROSS_COMPILE)as
 # Always use GNU ld
 LD	= $(shell if $(CROSS_COMPILE)ld.bfd -v > /dev/null 2>&1; \
 		then echo "$(CROSS_COMPILE)ld.bfd"; else echo "$(CROSS_COMPILE)ld"; fi;)
-
+ifdef (SYSROOT_DIR)
+CC      = $(CROSS_COMPILE)gcc --sysroot=$(SYSROOT_DIR)
+else
 CC	= $(CROSS_COMPILE)gcc
+endif
+
 CPP	= $(CC) -E
 AR	= $(CROSS_COMPILE)ar
 NM	= $(CROSS_COMPILE)nm

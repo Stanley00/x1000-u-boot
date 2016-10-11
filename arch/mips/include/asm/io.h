@@ -118,7 +118,7 @@ static inline void set_io_port_base(unsigned long base)
  * Change virtual addresses to physical addresses and vv.
  * These are trivial on the 1:1 Linux/MIPS mapping
  */
-extern inline phys_addr_t virt_to_phys(volatile void * address)
+static inline phys_addr_t virt_to_phys(volatile void * address)
 {
 #ifndef CONFIG_64BIT
 	return CPHYSADDR(address);
@@ -127,7 +127,7 @@ extern inline phys_addr_t virt_to_phys(volatile void * address)
 #endif
 }
 
-extern inline void * phys_to_virt(unsigned long address)
+static inline void * phys_to_virt(unsigned long address)
 {
 #ifndef CONFIG_64BIT
 	return (void *)KSEG0ADDR(address);
@@ -139,7 +139,7 @@ extern inline void * phys_to_virt(unsigned long address)
 /*
  * IO bus memory addresses are also 1:1 with the physical address
  */
-extern inline unsigned long virt_to_bus(volatile void * address)
+static inline unsigned long virt_to_bus(volatile void * address)
 {
 #ifndef CONFIG_64BIT
 	return CPHYSADDR(address);
@@ -148,7 +148,7 @@ extern inline unsigned long virt_to_bus(volatile void * address)
 #endif
 }
 
-extern inline void * bus_to_virt(unsigned long address)
+static inline void * bus_to_virt(unsigned long address)
 {
 #ifndef CONFIG_64BIT
 	return (void *)KSEG0ADDR(address);
