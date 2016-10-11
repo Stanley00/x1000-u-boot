@@ -88,6 +88,13 @@ endif
 CFLAGS_NTR := $(call cc-option,-fno-toplevel-reorder)
 CFLAGS += $(CFLAGS_NTR)
 
+ifeq ("$(USE_PRIVATE_LIBGCC)", "yes")
+LD_LIBGCC =
+else
+LD_LIBGCC = -lgcc
+endif
+
+
 all:	$(obj).depend $(OBJS) $(LIB) $(SREC) $(BIN) $(ELF)
 
 #########################################################################
@@ -98,7 +105,7 @@ $(ELF):
 $(obj)%:	$(obj)%.o $(LIB)
 		$(LD) $(LDFLAGS) -g -Ttext $(CONFIG_STANDALONE_LOAD_ADDR) \
 			-o $@ -e $(SYM_PREFIX)$(notdir $(<:.o=)) $< $(LIB) \
-			-L$(gcclibdir) -lgcc
+			-L$(gcclibdir) $(LD_LIBGCC)
 
 $(SREC):
 $(obj)%.srec:	$(obj)%
