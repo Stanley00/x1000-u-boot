@@ -28,6 +28,6 @@ else
 PLATFORM_LDFLAGS  += -m elf32ltsmip
 endif
 
-USE_PRIVATE_LIBGCC = yes
+#USE_PRIVATE_LIBGCC = yes
 
 CONFIG_STANDALONE_LOAD_ADDR ?= 0x80200000 -T mips.lds

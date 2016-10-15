@@ -28,3 +28,6 @@ ifndef TEXT_BASE
 # RAM version
 TEXT_BASE = 0x80100000
 endif
+
+#USE_PRIVATE_LIBGCC = yes
+
