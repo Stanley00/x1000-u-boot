@@ -69,7 +69,7 @@ static int init_func_ram(void)
 #else
 	int board_type = 0;	/* use dummy arg */
 #endif
-	puts("DRAM:  ");
+	printf("DRAM: board_type=%d ", board_type);
 
 	gd->ram_size = initdram(board_type);
 	if (gd->ram_size > 0) {

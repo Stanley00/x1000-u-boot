@@ -21,7 +21,7 @@
  * MA 02111-1307 USA
  */
 
-/* #define DEBUG */
+#define DEBUG
 #include <config.h>
 #include <common.h>
 #include <ddr/ddr_common.h>
@@ -42,7 +42,7 @@ static unsigned int remap_array[] = REMMAP_ARRAY;
 #define remap_array REMMAP_ARRAY
 #endif
 
-//#define CONFIG_DWC_DEBUG 1
+#define CONFIG_DWC_DEBUG 1
 #include "ddr_debug.h"
 #define ddr_hang() do{								\
 		printf("%s %d\n",__FUNCTION__,__LINE__);	\
@@ -53,7 +53,8 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #ifdef  CONFIG_DWC_DEBUG
 #define FUNC_ENTER() printf("%s enter.\n",__FUNCTION__);
-#define FUNC_EXIT() printf("%s exit.\n",__FUNCTION__);
+#define FUNC_EXIT() 
+//printf("%s exit.\n",__FUNCTION__);
 
 static void dump_ddrc_register(void)
 {
@@ -181,7 +182,7 @@ static int ddr_training_hardware(int bypass)
 	result = ddr_readl(DDRP_PGSR);
 	if (result & (DDRP_PGSR_DTERR | DDRP_PGSR_DTIERR)) {
 		printf("DDR hardware training error result= %x\n",result);
-		dump_ddrp_register();
+		//dump_ddrp_register();
 	} else
 		result = 0;
 	FUNC_EXIT();
@@ -427,13 +428,13 @@ void sdram_init(void)
 	controller_reset_phy();
 	/* DDR PHY init*/
 	ddr_phy_init(bypass,type);
-	dump_ddrp_register();
+	//dump_ddrp_register();
 	/* DDR Controller init*/
 	ddr_controller_init(bypass,type);
 	if(ddr_hook && ddr_hook->post_ddr_init)
 		ddr_hook->post_ddr_init(bypass,type);
 	printf("DDRC_DLP:%x\n",ddr_readl(DDRC_DLP));
-	dump_ddrc_register();
+	//dump_ddrc_register();
 	/* DDRC address remap configure*/
 	debug("sdram init finished\n");
 }

@@ -23,6 +23,9 @@
  */
 
 /* #define debug */
+
+#define DEBUG
+
 #include <config.h>
 #include <common.h>
 #include <asm/io.h>

@@ -1,4 +1,9 @@
+export PATH=/usr/lib/ccache:/home/yong/mips/prebuilts/toolchains/mips-gcc472-glibc216/bin:$PATH
+
 make distclean
+
+time CROSS_COMPILE=mips-linux-gnu- make halley2_v10_uImage_sfc_nor -j4 V=1
+
 time make halley2_v10_uImage_sfc_nor -j8 V=1
 
 CROSS_COMPILE="ccache /home/yong/poky/build/tmp/sysroots/x86_64-linux/usr/bin/mipsel-poky-linux/mipsel-poky-linux-" make V=1
