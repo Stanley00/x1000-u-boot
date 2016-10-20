@@ -154,7 +154,7 @@ void board_init_f(ulong dummy)
 		memcpy((void*)0xf4000000,divvalues,sizeof(divvalues));
 	}
 #endif
-	debug("board_init_r\n");
+	debug("%s-%s\n", __FILE__, __func__);
 	board_init_r(NULL, 0);
 #else
 	debug("run firmware finished\n");

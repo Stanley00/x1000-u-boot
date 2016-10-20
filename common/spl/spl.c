@@ -125,7 +125,7 @@ __weak void __noreturn jump_to_image_no_args(struct spl_image_info *spl_image)
 	image_entry_noargs_t image_entry =
 			(image_entry_noargs_t) spl_image->entry_point;
 
-	debug("image entry point: 0x%X\n", spl_image->entry_point);
+	printf("SPL image entry point: 0x%X\n", spl_image->entry_point);
 	image_entry();
 }
 
@@ -149,7 +149,7 @@ static void spl_ram_load_image(void)
 void board_init_r(gd_t *dummy1, ulong dummy2)
 {
 	u32 boot_device;
-	debug(">>spl:board_init_r()\n");
+	printf(">>spl:board_init_r()\n");
 
 #ifdef CONFIG_SYS_SPL_MALLOC_START
 	mem_malloc_init(CONFIG_SYS_SPL_MALLOC_START,
@@ -168,7 +168,7 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 	spl_board_init();
 #endif
 	boot_device = spl_boot_device();
-	debug("boot device - %d\n", boot_device);
+	printf("SPL:boot device - %d\n", boot_device);
 #ifdef CONFIG_PALLADIUM
 	spl_board_prepare_for_linux();
 #endif
@@ -247,11 +247,11 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 
 	switch (spl_image.os) {
 	case IH_OS_U_BOOT:
-		debug("Jumping to U-Boot\n");
+		printf("SPL: Jumping to U-Boot\n");
 		break;
 #ifdef CONFIG_SPL_OS_BOOT
 	case IH_OS_LINUX:
-		debug("Jumping to Linux\n");
+		printf("SPL: Jumping to Linux\n");
 		spl_board_prepare_for_linux();
 		jump_to_image_linux((void *)CONFIG_SYS_SPL_ARGS_ADDR);
 #endif

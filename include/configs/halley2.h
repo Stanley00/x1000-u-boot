@@ -314,7 +314,7 @@
 
 /* MMC */
 #define CONFIG_CMD_MMC
-/*#define CONFIG_MMC_TRACE*/
+#define CONFIG_MMC_TRACE
 
 
 #ifdef CONFIG_CMD_MMC

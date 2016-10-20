@@ -380,7 +380,7 @@ static void jz_mmc_init_one(int idx, int controller, uintptr_t base, int clock)
 void jz_mmc_init(void)
 {
 	int i = 0;
-
+    puts("jz_mmc_init\n");
 #if defined(CONFIG_JZ_MMC_MSC0) && (!defined(CONFIG_SPL_BUILD) || (CONFIG_JZ_MMC_SPLMSC == 0))
 	jz_mmc_init_one(i++, 0, MSC0_BASE, MSC0);
 #endif
