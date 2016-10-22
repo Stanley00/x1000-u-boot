@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
  */
-
+#define DEBUG
 #include <config.h>
 #include <common.h>
 #include <command.h>
@@ -1167,7 +1167,7 @@ static int mmc_startup(struct mmc *mmc)
 	mmc->block_dev.blksz = mmc->read_bl_len;
 	mmc->block_dev.log2blksz = LOG2(mmc->block_dev.blksz);
 	mmc->block_dev.lba = lldiv(mmc->capacity, mmc->read_bl_len);
-#if !defined(CONFIG_SPL_BUILD) || defined(CONFIG_SPL_LIBCOMMON_SUPPORT)
+#if 1 // !defined(CONFIG_SPL_BUILD) || defined(CONFIG_SPL_LIBCOMMON_SUPPORT)
 	sprintf(mmc->block_dev.vendor, "Man %06x Snr %04x%04x",
 		mmc->cid[0] >> 24, (mmc->cid[2] & 0xffff),
 		(mmc->cid[3] >> 16) & 0xffff);
@@ -1177,6 +1177,7 @@ static int mmc_startup(struct mmc *mmc)
 		(mmc->cid[2] >> 24) & 0xff);
 	sprintf(mmc->block_dev.revision, "%d.%d", (mmc->cid[2] >> 20) & 0xf,
 		(mmc->cid[2] >> 16) & 0xf);
+    debug("\nvendor=[%s] product=[%s] revison=[%s]\n", mmc->block_dev.vendor, mmc->block_dev.product, mmc->block_dev.revision);
 #else
 	mmc->block_dev.vendor[0] = 0;
 	mmc->block_dev.product[0] = 0;
@@ -1327,7 +1328,7 @@ int mmc_init(struct mmc *mmc)
 
 	if (!err || err == IN_PROGRESS)
 		err = mmc_complete_init(mmc);
-	debug("%s: %d, time %lu\n", __func__, err, get_timer(start));
+	debug("\n%s: %d, time %lu\n", __func__, err, get_timer(start));
 	return err;
 }
 

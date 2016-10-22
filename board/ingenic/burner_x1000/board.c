@@ -73,6 +73,7 @@ int misc_init_r(void)
 #ifdef CONFIG_MMC
 int board_mmc_init(bd_t *bd)
 {
+    printf("%s-%s\n", __FILE__, __func__);
 	jz_mmc_init();
 	return 0;
 }

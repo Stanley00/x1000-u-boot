@@ -327,6 +327,7 @@ static void jz_mmc_init_one(int idx, int controller, uintptr_t base, int clock)
 	struct mmc *mmc = &mmc_dev[idx];
 	struct jz_mmc_priv *priv = &mmc_priv[idx];
 
+    printf("%s(%d, %d, %x, %d)\n", __func__, idx, controller, base, clock);
 	/* fill in the name */
 	strcpy(mmc->name, "msc");
 	mmc->name[10] = '0' + controller;

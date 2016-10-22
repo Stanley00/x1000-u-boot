@@ -96,7 +96,7 @@ int mmc_program(struct cloner *cloner,int mmc_index)
 	}
 
 	//debug_cond(BURNNER_DEBUG,"\nMMC write: dev # %d, block # %d, count %d ... ",
-	BURNNER_PRI("MMC write: dev # %d, block # %d, count %d ... ",
+	BURNNER_PRI("MMC write: dev # %d, block # %d, count %d ... \n",
 			curr_device, blk, cnt);
 
 	mmc_init(mmc);

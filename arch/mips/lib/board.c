@@ -179,7 +179,7 @@ void board_init_f(ulong bootflag)
 	/* round down to next 4 kB limit.
 	 */
 	addr &= ~(4096 - 1);
-	printf("Top of RAM usable for U-Boot at: %08lx\n", addr);
+	printf("%s Top of RAM usable for U-Boot at: %08lx\n", __func__, addr);
 #ifdef CONFIG_LCD
 #ifdef CONFIG_FB_ADDR
 	gd->fb_base = CONFIG_FB_ADDR;

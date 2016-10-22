@@ -149,7 +149,7 @@ static void spl_ram_load_image(void)
 void board_init_r(gd_t *dummy1, ulong dummy2)
 {
 	u32 boot_device;
-	debug(">>spl:board_init_r()\n");
+	puts(">>spl:board_init_r()\n");
 
 #ifdef CONFIG_SYS_SPL_MALLOC_START
 	mem_malloc_init(CONFIG_SYS_SPL_MALLOC_START,
@@ -281,7 +281,7 @@ void preloader_console_init(void)
 
 	gd->have_console = 1;
 
-	puts("\nU-Boot SPL " PLAIN_VERSION " (" U_BOOT_DATE " - " \
+	puts("\n preloader_console_init U-Boot SPL " PLAIN_VERSION " (" U_BOOT_DATE " - " \
 			U_BOOT_TIME ")\n");
 #ifdef CONFIG_SPL_DISPLAY_PRINT
 	spl_display_print();

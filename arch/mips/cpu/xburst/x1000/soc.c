@@ -98,10 +98,10 @@ void board_init_f(ulong dummy)
 	debug("PLL init\n");
 	pll_init();
 
-	debug("CLK init\n");
+	printf("CLK init\n");
 	clk_init();
 
-	debug("SDRAM init\n");
+	printf("SDRAM init\n");
 	sdram_init();
 
 #ifdef CONFIG_DDR_TEST
@@ -115,10 +115,10 @@ void board_init_f(ulong dummy)
 	memcpy((void*)0xf4000000,audio_div_apll,256);
 	memcpy((void*)0xf4000000+256,audio_div_mpll,256);
 
-	debug("board_init_r\n");
+	printf("board_init_r\n");
 	board_init_r(NULL, 0);
 #else
-	debug("run firmware finished\n");
+	printf("run firmware finished\n");
 	return ;
 #endif
 }
