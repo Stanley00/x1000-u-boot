@@ -335,5 +335,21 @@ loads_echo=1
 netmask=255.255.255.0
 serverip=192.168.4.13
 
+# NFS boot
+setenv bootargs 'console=ttyS2,115200n8 mem=64M@0x0 ip=dhcp root=/dev/nfs rw nfsroot=10.239.53.107:/home/yong/mips/rootfs rootdelay=2 debug'
 
+# test gpio in kernel
+4G module reset_in = SLCD_D13 = GPIO13
+gpio13=1 -> reset=0
+root@mips:/sys/class/gpio# echo 13 > export
+root@mips:/sys/class/gpio# echo out > gpio13/direction
+root@mips:/sys/class/gpio# echo 0 > gpio13/value
+root@mips:/sys/class/gpio# echo 1 > gpio13/value
 
+relay1 = SLCD_D0 = GPIO0
+gpio0=1 -> 24V off
+
+relay2 gpio2
+relay3 gpio3
+relay4 gpio4
+relay5 gpio5
