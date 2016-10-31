@@ -201,7 +201,7 @@ static int menukey = 0;
 
 static int abortboot_normal(int bootdelay)
 {
-	int abort = 0;
+	int abort = 0, input_key1, input_key2;
 	unsigned long ts;
 
 #ifdef CONFIG_MENUPROMPT
@@ -231,14 +231,18 @@ static int abortboot_normal(int bootdelay)
 		ts = get_timer(0);
 		do {
 			if (tstc()) {	/* we got a key press	*/
-				abort  = 1;	/* don't auto boot	*/
-				bootdelay = 0;	/* no more delay	*/
+                input_key1 = getc();
+                printf("Get[%x]\n", input_key1);
+                if ((' ' == input_key1) && (0xd == getc())) {
+				    abort  = 1;	/* don't auto boot	*/
+				    bootdelay = 0;	/* no more delay	*/
 # ifdef CONFIG_MENUKEY
 				menukey = getc();
 # else
 				(void) getc();  /* consume input	*/
 # endif
 				break;
+              }
 			}
 			udelay(10000);
 		} while (!abort && get_timer(ts) < 1000);
